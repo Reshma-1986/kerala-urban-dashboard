@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kerala Urban Growth Dashboard</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+html, body { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
+body { display: flex; flex-direction: column; }
+
+/* Header */
+#header {
+  background: #005f73;
+  color: white;
+  padding: 15px 20px;
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+/* Main content area */
+#content {
+  flex: 1;
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+}
+
+/* Map container */
+#map {
+  flex: 2;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  height: 100%;
+}
+
+/* Info panel */
+#info {
+  flex: 1;
+  background: #fefae0;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow-y: auto;
+}
+
+#info h2 {
+  margin-top: 0;
+  color: #0a9396;
+}
+
+#info ul {
+  padding-left: 20px;
+}
+
+#info ul li {
+  margin-bottom: 8px;
+}
+
+/* Legend inside info panel */
+#legend {
+  margin-top: 20px;
+}
+
+.legend-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  border: 1px solid #00000030;
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  Urban Growth in Kerala: 2000 vs 2020
+</div>
+
+<div id="content">
+  <div id="map"></div>
+
+  <div id="info">
+    <h2>About Kerala</h2>
+    <ul>
+      <li>Location: Southwestern India, along the Malabar Coast</li>
+      <li>Area: 38,863 km²</li>
+      <li>Population (2021 est.): ~35 million</li>
+      <li>Urbanization rate: ~47%</li>
+      <li>Number of districts: 14</li>
+      <li>Notable: High literacy, strong human development indicators, rapid urban expansion</li>
+    </ul>
+
+    <h2>Dataset Source</h2>
+    <p>The urban extent datasets for 2000 and 2020 are derived from the <strong>Global Human Settlement Layer (GHSL)</strong> WUP (World Settlement Population) data. 
+       These datasets classify urban areas based on built-up presence and population density.</p>
+
+    <h2>Urban Intensity Legend</h2>
+    <div id="legend">
+      <div class="legend-row">
+        <span class="legend-color" style="background:yellow;"></span> Low
+      </div>
+      <div class="legend-row">
+        <span class="legend-color" style="background:orange;"></span> Medium
+      </div>
+      <div class="legend-row">
+        <span class="legend-color" style="background:red;"></span> High
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // Initialize map centered on Kerala
+  const map = L.map('map').setView([10.85, 76.3], 7);
+
+  // Basemap
+  const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  // Image bounds
+  const imgBounds = [[8.3,74.87],[12.79,77.41]];
+
+  // PNG overlays (transparent, exported from QGIS)
+  const kerala2000 = L.imageOverlay('data/kerala_2000.png', imgBounds);
+  const kerala2020 = L.imageOverlay('data/kerala_2020.png', imgBounds);
+
+  // Layer control
+  const overlays = {
+    "Urban 2000": kerala2000,
+    "Urban 2020": kerala2020
+  };
+  L.control.layers(null, overlays, {collapsed:false, position:'topright'}).addTo(map);
+
+  // Default layer
+  kerala2000.addTo(map);
+
+
+</script>
+
+</body>
+</html>
